@@ -1,6 +1,7 @@
 package dbr
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -80,11 +81,11 @@ type SessionRunner interface {
 }
 
 type runner interface {
-	Exec(query string, args ...interface{}) (sql.Result, error)
-	Query(query string, args ...interface{}) (*sql.Rows, error)
+	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
 }
 
-func exec(runner runner, log EventReceiver, builder Builder, d Dialect) (sql.Result, error) {
+func exec(ctx context.Context, runner runner, log EventReceiver, builder Builder, d Dialect) (sql.Result, error) {
 	i := interpolator{
 		Buffer:       NewBuffer(),
 		Dialect:      d,
@@ -106,7 +107,7 @@ func exec(runner runner, log EventReceiver, builder Builder, d Dialect) (sql.Res
 		})
 	}()
 
-	result, err := runner.Exec(query, value...)
+	result, err := runner.ExecContext(ctx, query, value...)
 	if err != nil {
 		return result, log.EventErrKv("dbr.exec.exec", err, kvs{
 			"sql": query,
@@ -115,7 +116,7 @@ func exec(runner runner, log EventReceiver, builder Builder, d Dialect) (sql.Res
 	return result, nil
 }
 
-func query(runner runner, log EventReceiver, builder Builder, d Dialect, dest interface{}) (int, error) {
+func query(ctx context.Context, runner runner, log EventReceiver, builder Builder, d Dialect, dest interface{}) (int, error) {
 	i := interpolator{
 		Buffer:       NewBuffer(),
 		Dialect:      d,
@@ -137,7 +138,7 @@ func query(runner runner, log EventReceiver, builder Builder, d Dialect, dest in
 		})
 	}()
 
-	rows, err := runner.Query(query, value...)
+	rows, err := runner.QueryContext(ctx, query, value...)
 	if err != nil {
 		return 0, log.EventErrKv("dbr.select.load.query", err, kvs{
 			"sql": query,
