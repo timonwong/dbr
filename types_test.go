@@ -12,7 +12,7 @@ import (
 var (
 	filledRecord = nullTypedRecord{
 		StringVal:  NewNullString("wow"),
-		Int64Val:   NewNullInt64(42),
+		Int64Val:   NewNullInt64(4211223344),
 		Float64Val: NewNullFloat64(1.618),
 		TimeVal:    NewNullTime(time.Date(2009, 1, 3, 18, 15, 5, 0, time.UTC)),
 		BoolVal:    NewNullBool(true),
@@ -31,11 +31,16 @@ func TestNullTypesScanning(t *testing.T) {
 		for _, sess := range testSession {
 			test.in.Id = nextID()
 			_, err := sess.InsertInto("null_types").Columns("id", "string_val", "int64_val", "float64_val", "time_val", "bool_val").Record(test.in).Exec()
-			assert.NoError(t, err)
+			if !assert.NoError(t, err) {
+				continue
+			}
 
 			var record nullTypedRecord
 			err = sess.Select("*").From("null_types").Where(Eq("id", test.in.Id)).LoadStruct(&record)
-			assert.NoError(t, err)
+			if !assert.NoError(t, err) {
+				continue
+			}
+
 			if sess.Dialect == dialect.PostgreSQL {
 				// TODO: https://github.com/lib/pq/issues/329
 				if !record.TimeVal.Time.IsZero() {
@@ -70,7 +75,13 @@ func TestNullTypesJSON(t *testing.T) {
 			in:   &filledRecord.Int64Val,
 			in2:  filledRecord.Int64Val,
 			out:  new(NullInt64),
-			want: "42",
+			want: "4211223344",
+		},
+		{
+			in:   new(NullInt64),
+			in2:  NullInt64{},
+			out:  new(NullInt64),
+			want: "null",
 		},
 		{
 			in:   &filledRecord.StringVal,
@@ -87,17 +98,23 @@ func TestNullTypesJSON(t *testing.T) {
 	} {
 		// marshal ptr
 		b, err := json.Marshal(test.in)
-		assert.NoError(t, err)
+		if !assert.NoError(t, err) {
+			return
+		}
 		assert.Equal(t, test.want, string(b))
 
 		// marshal value
 		b, err = json.Marshal(test.in2)
-		assert.NoError(t, err)
+		if !assert.NoError(t, err) {
+			return
+		}
 		assert.Equal(t, test.want, string(b))
 
 		// unmarshal
 		err = json.Unmarshal(b, test.out)
-		assert.NoError(t, err)
+		if !assert.NoError(t, err) {
+			return
+		}
 		assert.Equal(t, test.in, test.out)
 	}
 }
