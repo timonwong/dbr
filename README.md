@@ -1,6 +1,6 @@
-# gocraft/dbr (database records) [![GoDoc](https://godoc.org/github.com/gocraft/web?status.png)](https://godoc.org/github.com/gocraft/dbr)
+dbr (fork of gocraft/dbr) provides additions to Go's database/sql for super fast performance and convenience.
 
-gocraft/dbr provides additions to Go's database/sql for super fast performance and convenience.
+[![Build Status](https://circleci.com/gh/timonwong/dbr.svg?style=svg)](https://circleci.com/gh/timonwong/dbr)
 
 ## Getting Started
 
@@ -41,14 +41,14 @@ builder := dbr.SelectBySql("SELECT `title`, `body` FROM `suggestions` ORDER BY `
 
 ### Amazing instrumentation with session
 
-All queries in gocraft/dbr are made in the context of a session. This is because when instrumenting your app, it's important to understand which business action the query took place in. See gocraft/health for more detail.
+All queries in timonwong/dbr are made in the context of a session. This is because when instrumenting your app, it's important to understand which business action the query took place in. See gocraft/health for more detail.
 
-Writing instrumented code is a first-class concern for gocraft/dbr. We instrument each query to emit to a gocraft/health-compatible EventReceiver interface.
+Writing instrumented code is a first-class concern for timonwong/dbr. We instrument each query to emit to a gocraft/health-compatible EventReceiver interface.
 
 ### Faster performance than using database/sql directly
 Every time you call database/sql's db.Query("SELECT ...") method, under the hood, the mysql driver will create a prepared statement, execute it, and then throw it away. This has a big performance cost.
 
-gocraft/dbr doesn't use prepared statements. We ported mysql's query escape functionality directly into our package, which means we interpolate all of those question marks with their arguments before they get to MySQL. The result of this is that it's way faster, and just as secure.
+timonwong/dbr doesn't use prepared statements. We ported mysql's query escape functionality directly into our package, which means we interpolate all of those question marks with their arguments before they get to MySQL. The result of this is that it's way faster, and just as secure.
 
 Check out these [benchmarks](https://github.com/tyler-smith/golang-sql-benchmark).
 
@@ -75,7 +75,7 @@ Every try to JSON-encode a sql.NullString? You get:
 }
 ```
 
-Not quite what you want. gocraft/dbr has dbr.NullString (and the rest of the Null* types) that encode correctly, giving you:
+Not quite what you want. timonwong/dbr has dbr.NullString (and the rest of the Null* types) that encode correctly, giving you:
 
 ```json
 {
@@ -117,7 +117,7 @@ return tx.Commit()
 
 ### Load database values to variables
 
-Querying is the heart of gocraft/dbr.
+Querying is the heart of timonwong/dbr.
 
 * Load(&any): load everything!
 * LoadStruct(&oneStruct): load struct
@@ -274,17 +274,6 @@ type Builder interface {
 * MySQL
 * PostgreSQL
 * SQLite3
-
-## gocraft
-
-gocraft offers a toolkit for building web apps. Currently these packages are available:
-
-* [gocraft/web](https://github.com/gocraft/web) - Go Router + Middleware. Your Contexts.
-* [gocraft/dbr](https://github.com/gocraft/dbr) - Additions to Go's database/sql for super fast performance and convenience.
-* [gocraft/health](https://github.com/gocraft/health) -  Instrument your web apps with logging and metrics.
-* [gocraft/work](https://github.com/gocraft/work) - Process background jobs in Go.
-
-These packages were developed by the [engineering team](https://eng.uservoice.com) at [UserVoice](https://www.uservoice.com) and currently power much of its infrastructure and tech stack.
 
 ## Thanks & Authors
 Inspiration from these excellent libraries:
