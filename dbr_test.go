@@ -103,7 +103,7 @@ func reset(sess *Session) {
 		fmt.Sprintf(`CREATE TABLE null_types (
 			id %s,
 			string_val varchar(255) NULL,
-			int64_val integer NULL,
+			int64_val bigint NULL,
 			float64_val float NULL,
 			time_val timestamp NULL ,
 			bool_val bool NULL
