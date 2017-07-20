@@ -3,6 +3,7 @@ package dbr
 import (
 	"database/sql"
 	"reflect"
+	"context"
 )
 
 type InsertBuilder struct {
@@ -64,8 +65,8 @@ func (b *InsertBuilder) Pair(column string, value interface{}) *InsertBuilder {
 	return b
 }
 
-func (b *InsertBuilder) Exec() (sql.Result, error) {
-	result, err := exec(b.runner, b.EventReceiver, b, b.Dialect)
+func (b *InsertBuilder) ExecContext(ctx context.Context) (sql.Result, error) {
+	result, err := exec(ctx, b.runner, b.EventReceiver, b, b.Dialect)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +78,10 @@ func (b *InsertBuilder) Exec() (sql.Result, error) {
 	}
 
 	return result, nil
+}
+
+func (b *InsertBuilder) Exec() (sql.Result, error) {
+	return b.ExecContext(context.Background())
 }
 
 func (b *InsertBuilder) Columns(column ...string) *InsertBuilder {

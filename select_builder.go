@@ -1,5 +1,7 @@
 package dbr
 
+import "context"
+
 type SelectBuilder struct {
 	runner
 	EventReceiver
@@ -52,27 +54,39 @@ func (tx *Tx) SelectBySql(query string, value ...interface{}) *SelectBuilder {
 	}
 }
 
+func (b *SelectBuilder) LoadContext(ctx context.Context, value interface{}) (int, error) {
+	return query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
+}
+
 func (b *SelectBuilder) Load(value interface{}) (int, error) {
-	return query(b.runner, b.EventReceiver, b, b.Dialect, value)
+	return b.LoadContext(context.Background(), value)
+}
+
+func (b *SelectBuilder) LoadStructContext(ctx context.Context, value interface{}) error {
+	count, err := query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return ErrNotFound
+	}
+	return nil
 }
 
 func (b *SelectBuilder) LoadStruct(value interface{}) error {
-	count, err := query(b.runner, b.EventReceiver, b, b.Dialect, value)
-	if err != nil {
-		return err
-	}
-	if count == 0 {
-		return ErrNotFound
-	}
-	return nil
+	return b.LoadStructContext(context.Background(), value)
+}
+
+func (b *SelectBuilder) LoadStructsContext(ctx context.Context, value interface{}) (int, error) {
+	return query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
 }
 
 func (b *SelectBuilder) LoadStructs(value interface{}) (int, error) {
-	return query(b.runner, b.EventReceiver, b, b.Dialect, value)
+	return b.LoadStructsContext(context.Background(), value)
 }
 
-func (b *SelectBuilder) LoadValue(value interface{}) error {
-	count, err := query(b.runner, b.EventReceiver, b, b.Dialect, value)
+func (b *SelectBuilder) LoadValueContext(ctx context.Context, value interface{}) error {
+	count, err := query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
 	if err != nil {
 		return err
 	}
@@ -82,8 +96,16 @@ func (b *SelectBuilder) LoadValue(value interface{}) error {
 	return nil
 }
 
+func (b *SelectBuilder) LoadValue(value interface{}) error {
+	return b.LoadValueContext(context.Background(), value)
+}
+
+func (b *SelectBuilder) LoadValuesContext(ctx context.Context, value interface{}) (int, error) {
+	return query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
+}
+
 func (b *SelectBuilder) LoadValues(value interface{}) (int, error) {
-	return query(b.runner, b.EventReceiver, b, b.Dialect, value)
+	return b.LoadValuesContext(context.Background(), value)
 }
 
 func (b *SelectBuilder) Join(table, on interface{}) *SelectBuilder {
