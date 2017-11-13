@@ -66,10 +66,22 @@ func TestNullTypesJSON(t *testing.T) {
 			want: "true",
 		},
 		{
+			in:   new(NullBool),
+			in2:  NullBool{},
+			out:  new(NullBool),
+			want: "null",
+		},
+		{
 			in:   &filledRecord.Float64Val,
 			in2:  filledRecord.Float64Val,
 			out:  new(NullFloat64),
 			want: "1.618",
+		},
+		{
+			in:   new(NullFloat64),
+			in2:  NullFloat64{},
+			out:  new(NullFloat64),
+			want: "null",
 		},
 		{
 			in:   &filledRecord.Int64Val,
@@ -90,10 +102,22 @@ func TestNullTypesJSON(t *testing.T) {
 			want: `"wow"`,
 		},
 		{
+			in:   new(NullString),
+			in2:  NullString{},
+			out:  new(NullString),
+			want: "null",
+		},
+		{
 			in:   &filledRecord.TimeVal,
 			in2:  filledRecord.TimeVal,
 			out:  new(NullTime),
 			want: `"2009-01-03T18:15:05Z"`,
+		},
+		{
+			in:   new(NullTime),
+			in2:  NullTime{},
+			out:  new(NullTime),
+			want: "null",
 		},
 	} {
 		// marshal ptr

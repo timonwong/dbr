@@ -1,8 +1,8 @@
 dbr (fork of gocraft/dbr) provides additions to Go's database/sql for super fast performance and convenience.
 
-[![Build Status](https://circleci.com/gh/timonwong/dbr.svg?style=svg)](https://circleci.com/gh/timonwong/dbr)
-[![codecov](https://codecov.io/gh/timonwong/dbr/branch/master/graph/badge.svg)](https://codecov.io/gh/timonwong/dbr)
-[![GoDoc](https://godoc.org/github.com/timonwong/web?status.png)](https://godoc.org/github.com/timonwong/dbr)
+[![Build Status](https://img.shields.io/circleci/project/github/timonwong/dbr/master.svg)](https://circleci.com/gh/timonwong/dbr)
+[![codecov](https://img.shields.io/codecov/c/github/timonwong/dbr/master.svg)](https://codecov.io/gh/timonwong/dbr)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg)](https://godoc.org/github.com/timonwong/dbr)
 
 ## Getting Started
 
