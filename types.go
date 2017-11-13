@@ -99,22 +99,44 @@ func (n *NullString) UnmarshalJSON(b []byte) error {
 
 // UnmarshalJSON correctly deserializes a NullInt64 from JSON
 func (n *NullInt64) UnmarshalJSON(b []byte) error {
-	var s interface{}
-	dec := json.NewDecoder(bytes.NewReader(b))
-	dec.UseNumber()
-	if err := dec.Decode(&s); err != nil {
+	// scan for null
+	if bytes.Equal(b, nullString) {
+		return n.Scan(nil)
+	}
+
+	var s json.Number
+	if err := json.Unmarshal(b, &s); err != nil {
 		return err
 	}
-	return n.Scan(s)
+
+	v, err := s.Int64()
+	if err != nil {
+		return err
+	}
+	n.Valid = true
+	n.Int64 = v
+	return nil
 }
 
 // UnmarshalJSON correctly deserializes a NullFloat64 from JSON
 func (n *NullFloat64) UnmarshalJSON(b []byte) error {
-	var s interface{}
+	// scan for null
+	if bytes.Equal(b, nullString) {
+		return n.Scan(nil)
+	}
+
+	var s json.Number
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
 	}
-	return n.Scan(s)
+
+	v, err := s.Float64()
+	if err != nil {
+		return err
+	}
+	n.Valid = true
+	n.Float64 = v
+	return nil
 }
 
 // UnmarshalJSON correctly deserializes a NullTime from JSON
