@@ -62,7 +62,7 @@ func (b *SelectBuilder) Load(value interface{}) (int, error) {
 	return b.LoadContext(context.Background(), value)
 }
 
-func (b *SelectBuilder) LoadStructContext(ctx context.Context, value interface{}) error {
+func (b* SelectBuilder) LoadOneContext(ctx context.Context, value interface{}) error {
 	count, err := query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
 	if err != nil {
 		return err
@@ -73,39 +73,28 @@ func (b *SelectBuilder) LoadStructContext(ctx context.Context, value interface{}
 	return nil
 }
 
+func (b* SelectBuilder) LoadOne(value interface{}) error {
+	return b.LoadOneContext(context.Background(), value)
+}
+
+// DEPRECATED: use LoadOne instead
 func (b *SelectBuilder) LoadStruct(value interface{}) error {
-	return b.LoadStructContext(context.Background(), value)
+	return b.LoadOneContext(context.Background(), value)
 }
 
-func (b *SelectBuilder) LoadStructsContext(ctx context.Context, value interface{}) (int, error) {
-	return query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
-}
-
+// DEPRECATED: use Load instead
 func (b *SelectBuilder) LoadStructs(value interface{}) (int, error) {
-	return b.LoadStructsContext(context.Background(), value)
+	return b.Load(value)
 }
 
-func (b *SelectBuilder) LoadValueContext(ctx context.Context, value interface{}) error {
-	count, err := query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
-	if err != nil {
-		return err
-	}
-	if count == 0 {
-		return ErrNotFound
-	}
-	return nil
-}
-
+// DEPRECATED: use LoadOne instead
 func (b *SelectBuilder) LoadValue(value interface{}) error {
-	return b.LoadValueContext(context.Background(), value)
+	return b.LoadOne(value)
 }
 
-func (b *SelectBuilder) LoadValuesContext(ctx context.Context, value interface{}) (int, error) {
-	return query(ctx, b.runner, b.EventReceiver, b, b.Dialect, value)
-}
-
+// DEPRECATED: use Load instead
 func (b *SelectBuilder) LoadValues(value interface{}) (int, error) {
-	return b.LoadValuesContext(context.Background(), value)
+	return b.Load(value)
 }
 
 func (b *SelectBuilder) Join(table, on interface{}) *SelectBuilder {

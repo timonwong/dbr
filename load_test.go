@@ -65,7 +65,7 @@ func BenchmarkLoad(b *testing.B) {
 			i int
 			j int
 		}, 0, 100)
-		session.Select("a", "b", "c").From("table").LoadStructs(&r)
+		session.Select("a", "b", "c").From("table").Load(&r)
 	}
 }
 

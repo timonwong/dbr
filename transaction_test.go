@@ -25,7 +25,7 @@ func TestTransactionCommit(t *testing.T) {
 		assert.NoError(t, err)
 
 		var person dbrPerson
-		err = tx.Select("*").From("dbr_people").Where(Eq("id", id)).LoadStruct(&person)
+		err = tx.Select("*").From("dbr_people").Where(Eq("id", id)).LoadOne(&person)
 		assert.Error(t, err)
 	}
 }
@@ -49,7 +49,7 @@ func TestTransactionRollback(t *testing.T) {
 		assert.NoError(t, err)
 
 		var person dbrPerson
-		err = tx.Select("*").From("dbr_people").Where(Eq("id", id)).LoadStruct(&person)
+		err = tx.Select("*").From("dbr_people").Where(Eq("id", id)).LoadOne(&person)
 		assert.Error(t, err)
 	}
 }
