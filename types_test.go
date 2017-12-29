@@ -36,7 +36,7 @@ func TestNullTypesScanning(t *testing.T) {
 			}
 
 			var record nullTypedRecord
-			err = sess.Select("*").From("null_types").Where(Eq("id", test.in.Id)).LoadStruct(&record)
+			err = sess.Select("*").From("null_types").Where(Eq("id", test.in.Id)).LoadOne(&record)
 			if !assert.NoError(t, err) {
 				continue
 			}
