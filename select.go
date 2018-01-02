@@ -1,7 +1,5 @@
 package dbr
 
-import "fmt"
-
 // SelectStmt builds `SELECT ...`
 type SelectStmt struct {
 	raw
@@ -114,14 +112,10 @@ func (b *SelectStmt) Build(d Dialect, buf Buffer) error {
 	}
 
 	if b.LimitCount >= 0 {
-		buf.WriteString(" LIMIT ")
-		buf.WriteString(fmt.Sprint(b.LimitCount))
+		buf.WriteString(" ")
+		buf.WriteString(d.Limit(b.OffsetCount, b.LimitCount))
 	}
 
-	if b.OffsetCount >= 0 {
-		buf.WriteString(" OFFSET ")
-		buf.WriteString(fmt.Sprint(b.OffsetCount))
-	}
 	return nil
 }
 
@@ -205,7 +199,7 @@ func (b *SelectStmt) Limit(n uint64) *SelectStmt {
 	return b
 }
 
-// Offset adds offset
+// Offset adds offset, works only if LIMIT is set
 func (b *SelectStmt) Offset(n uint64) *SelectStmt {
 	b.OffsetCount = int64(n)
 	return b
